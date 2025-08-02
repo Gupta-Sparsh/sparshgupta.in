@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Mode Debug Test</title>
+    <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a6fd8;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --text: #333;
+            --text-light: #666;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --bg: #ffffff;
+            --bg-alt: #f8fafc;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --border: #e2e8f0;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-color: #667eea;
+            --accent-color: #f093fb;
+            --border-color: #e2e8f0;
+        }
+
+        [data-theme="dark"] {
+            --primary: #7c3aed;
+            --primary-dark: #6d28d9;
+            --secondary: #8b5cf6;
+            --accent: #a78bfa;
+            --text: #ffffff;
+            --text-light: #e5e5e5;
+            --text-primary: #ffffff;
+            --text-secondary: #e5e5e5;
+            --bg: #000000;
+            --bg-alt: #1a1a1a;
+            --bg-primary: #000000;
+            --bg-secondary: #1a1a1a;
+            --border: #333333;
+            --shadow: rgba(255, 255, 255, 0.1);
+            --gradient: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
+            --primary-color: #7c3aed;
+            --accent-color: #a78bfa;
+            --border-color: #333333;
+        }
+
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            transition: all 0.3s ease;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .debug-panel {
+            background: var(--bg-alt);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 2px solid var(--text);
+            color: var(--text);
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 10px 0;
+        }
+
+        .theme-toggle:hover {
+            background: var(--text);
+            color: var(--bg);
+            transform: translateY(-2px);
+        }
+
+        #themeStatus {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+
+        .sample-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        .sample-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .sample-card p {
+            color: var(--text-secondary);
+            margin: 0;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <h1>🌓 Dark Mode Debug Test</h1>
+    
+    <div class="debug-panel">
+        <h2>Theme Information</h2>
+        <p><strong>Current Theme:</strong> <span id="themeStatus">Loading...</span></p>
+        <p><strong>HTML data-theme:</strong> <span id="htmlTheme">Loading...</span></p>
+        <p><strong>Stored Theme:</strong> <span id="storedTheme">Loading...</span></p>
+        
+        <button class="theme-toggle" id="themeToggle">
+            <i class="fas fa-moon"></i>
+            <span>Dark</span>
+        </button>
+        
+        <p><em>Click the button above to toggle between light and dark modes</em></p>
+    </div>
+
+    <div class="debug-panel">
+        <h2>CSS Variables Test</h2>
+        <p><strong>--bg value:</strong> <span id="bgValue">Loading...</span></p>
+        <p><strong>--text value:</strong> <span id="textValue">Loading...</span></p>
+        <p><strong>--primary-color value:</strong> <span id="primaryValue">Loading...</span></p>
+    </div>
+
+    <div class="sample-card">
+        <h3>Sample Card</h3>
+        <p>This card should change colors when you toggle the theme. The background, text, and borders should all switch between light and dark variants.</p>
+    </div>
+
+    <script>
+        function updateDebugInfo() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const storedTheme = localStorage.getItem('theme') || 'none';
+            
+            document.getElementById('themeStatus').textContent = currentTheme;
+            document.getElementById('htmlTheme').textContent = currentTheme;
+            document.getElementById('storedTheme').textContent = storedTheme;
+            
+            // Get computed CSS values
+            const styles = getComputedStyle(document.documentElement);
+            document.getElementById('bgValue').textContent = styles.getPropertyValue('--bg');
+            document.getElementById('textValue').textContent = styles.getPropertyValue('--text');
+            document.getElementById('primaryValue').textContent = styles.getPropertyValue('--primary-color');
+            
+            console.log('Theme updated:', currentTheme);
+            console.log('CSS Variables:', {
+                bg: styles.getPropertyValue('--bg'),
+                text: styles.getPropertyValue('--text'),
+                primary: styles.getPropertyValue('--primary-color')
+            });
+        }
+
+        function initTheme() {
+            const themeToggle = document.getElementById('themeToggle');
+            
+            if (!themeToggle) {
+                console.error('Theme toggle button not found!');
+                return;
+            }
+            
+            const themeIcon = themeToggle.querySelector('i');
+            const themeText = themeToggle.querySelector('span');
+            
+            if (!themeIcon || !themeText) {
+                console.error('Theme toggle icon or text not found!');
+                return;
+            }
+            
+            // Check for saved theme preference or default to 'light'
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            
+            // Update button text and icon
+            updateThemeButton(currentTheme, themeIcon, themeText);
+            updateDebugInfo();
+            
+            // Theme toggle event listener
+            themeToggle.addEventListener('click', () => {
+                const current = document.documentElement.getAttribute('data-theme');
+                const newTheme = current === 'dark' ? 'light' : 'dark';
+                
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateThemeButton(newTheme, themeIcon, themeText);
+                updateDebugInfo();
+                
+                console.log('Theme switched to:', newTheme);
+            });
+            
+            console.log('Theme toggle initialized. Current theme:', currentTheme);
+        }
+
+        function updateThemeButton(theme, icon, text) {
+            if (theme === 'dark') {
+                icon.className = 'fas fa-sun';
+                text.textContent = 'Light';
+            } else {
+                icon.className = 'fas fa-moon';
+                text.textContent = 'Dark';
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, initializing theme...');
+            initTheme();
+        });
+
+        // Also update debug info when page loads
+        window.addEventListener('load', () => {
+            setTimeout(updateDebugInfo, 100);
+        });
+    </script>
+</body>
+</html>

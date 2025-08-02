@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme Test</title>
+    <style>
+        :root {
+            --text: #333;
+            --bg: #ffffff;
+        }
+
+        [data-theme="dark"] {
+            --text: #f1f5f9;
+            --bg: #0f172a;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            transition: all 0.3s ease;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 2px solid var(--text);
+            color: var(--text);
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--text);
+            color: var(--bg);
+        }
+    </style>
+</head>
+<body>
+    <h1>Theme Toggle Test</h1>
+    <p>This is a test to verify the theme toggle is working.</p>
+    
+    <button class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+        <span>Dark</span>
+    </button>
+
+    <script>
+        function initTheme() {
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = themeToggle.querySelector('i');
+            const themeText = themeToggle.querySelector('span');
+            
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            
+            updateThemeButton(currentTheme, themeIcon, themeText);
+            
+            themeToggle.addEventListener('click', () => {
+                const current = document.documentElement.getAttribute('data-theme');
+                const newTheme = current === 'dark' ? 'light' : 'dark';
+                
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateThemeButton(newTheme, themeIcon, themeText);
+                
+                console.log('Theme switched to:', newTheme);
+            });
+        }
+
+        function updateThemeButton(theme, icon, text) {
+            if (theme === 'dark') {
+                icon.className = 'fas fa-sun';
+                text.textContent = 'Light';
+            } else {
+                icon.className = 'fas fa-moon';
+                text.textContent = 'Dark';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initTheme);
+    </script>
+</body>
+</html>
